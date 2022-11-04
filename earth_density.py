@@ -57,16 +57,39 @@ def rho_earth_full(r):
     
     return rho
 
+def _rho_earth(z, theta):
+    return rho_earth_full(r(z, theta))
+
 # Density Plotting
 if __name__ == "__main__":
     for n in np.linspace(0, 0.9, 9):
         X = x(theta := np.pi * n)
         Z = np.linspace(0, X)
-        rho = [rho_earth_full(r(z, theta)) for z in Z]
+        rho = [_rho_earth(z, theta) for z in Z]
         plt.plot(Z, rho, label=f"$\\theta = {n:.1f}\pi$")
 
     plt.xlabel("Distance Penetrated (m)")
     plt.ylabel("Number Density (molecules/m$^3$)")
     plt.title("Density Profile of the Earth")
+    plt.legend()
+    plt.show()
+
+# Attenuation of the Earth
+def attenuation_integral(theta):
+    """Returns the integral of rho_earth described above."""
+    return quad( _rho_earth, 0, x(theta), args=[theta] )[0]
+
+angles = np.linspace(0, np.pi, 150)
+attenuation = [attenuation_integral(angle) for angle in angles]
+attenuation_function = InterpolatedUnivariateSpline(angles, attenuation, k=5) # Connects the dots
+
+if __name__ == "__main__":
+    plt.plot(angles, [avg_rho_earth * x(angle) for angle in angles], label="Average", linestyle="dashed", color="green")
+    plt.plot(angles, attenuation_function(angles), label="Actual Fit")
+    plt.plot(angles, attenuation, linestyle="none", marker=".", markersize=3, label="Actual Points")
+
+    plt.xlabel("$\\theta$ (rad)")
+    plt.ylabel("$\int_0^{x(\\theta)}{\\rho(r(x', \\theta)) \\: d x'}$ (m$^{-2}$)")
+    plt.title("Attenuation Integral")
     plt.legend()
     plt.show()
