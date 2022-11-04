@@ -21,3 +21,13 @@ from MCEq.core import MCEqRun
 import mceq_config
 ###import primary model choices
 import crflux.models as pm
+
+# Constants
+V_eff = (C.kilo)**3 # m**3; effective detector volume
+
+R_E = 6371 * C.kilo # m; radius of the earth
+atoms_earth = 1e50
+mass_earth = 5.97219e24 * 1e3 # gram
+
+seconds_per_year = 31556925.2160000 # used to convert from events/second to events/year
+number_density_water = 6.02214076e23 / (C.centi)**3 # / m**3; water equivalent for N_A
