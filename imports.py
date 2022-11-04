@@ -31,3 +31,14 @@ mass_earth = 5.97219e24 * 1e3 # gram
 
 seconds_per_year = 31556925.2160000 # used to convert from events/second to events/year
 number_density_water = 6.02214076e23 / (C.centi)**3 # / m**3; water equivalent for N_A
+
+# Loads Pickled Fits
+import os
+import dill as pickle
+
+path = os.path.abspath(os.path.dirname(os.path.abspath(__file__)))
+
+with open(path + "/Fits/cross_sections", "rb") as f:
+    cross_section_total = pickle.load(f)
+with open(path + "/Fits/attenuation_function", "rb") as f:
+    attenuation_function = pickle.load(f)

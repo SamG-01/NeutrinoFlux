@@ -1,4 +1,4 @@
-from imports import *
+from .imports import *
 
 # Distance Functions
 def x(theta):
@@ -84,6 +84,9 @@ attenuation = [attenuation_integral(angle) for angle in angles]
 attenuation_function = InterpolatedUnivariateSpline(angles, attenuation, k=5) # Connects the dots
 
 if __name__ == "__main__":
+    with open("Fits/attenuation_function", "wb") as f:
+        pickle.dump(attenuation_function, f)
+
     plt.plot(angles, [avg_rho_earth * x(angle) for angle in angles], label="Average", linestyle="dashed", color="green")
     plt.plot(angles, attenuation_function(angles), label="Actual Fit")
     plt.plot(angles, attenuation, linestyle="none", marker=".", markersize=3, label="Actual Points")

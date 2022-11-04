@@ -1,4 +1,4 @@
-from imports import *
+from .imports import *
 
 # GR Contribution
 GR_bounds = GR_a, GR_b = (4*C.peta, 8*C.peta)
@@ -43,10 +43,11 @@ if __name__ == "__main__":
     print("Resonant Cross Section:", max(_sigma_GR(GR_range)))
 
 # NC and CC Contribution
-nu_cc=np.loadtxt('Cross Section Data/total_nu_CC_iso_NLO_HERAPDF1.5NLO_EIG.dat',skiprows=1,unpack=True) * 1e-27 * (C.centi)**2
-nu_nc=np.loadtxt('Cross Section Data/total_nu_NC_iso_NLO_HERAPDF1.5NLO_EIG.dat',skiprows=1,unpack=True) * 1e-27 * (C.centi)**2
-nubar_cc=np.loadtxt('Cross Section Data/total_nubar_CC_iso_NLO_HERAPDF1.5NLO_EIG.dat',skiprows=1,unpack=True) * 1e-27 * (C.centi)**2
-nubar_nc=np.loadtxt('Cross Section Data/total_nubar_NC_iso_NLO_HERAPDF1.5NLO_EIG.dat',skiprows=1,unpack=True) * 1e-27 * (C.centi)**2
+files = [path + "/Cross Section Data/total_nu" + name + "_iso_NLO_HERAPDF1.5NLO_EIG.dat" for name in ("_CC", "_NC", "bar_NC", "bar_CC")]
+
+nu_cc, nu_nc, nubar_nc, nubar_cc = 1e-27 * (C.centi)**2 * np.array([
+    np.loadtxt(file, skiprows=1, unpack=True) for file in files
+])
 
 E_range = np.logspace(1, 12, 111) * C.giga
 
@@ -88,3 +89,7 @@ for anti in [False, True]:
         
         plt.legend()
         plt.show()
+
+if __name__ == "__main__":
+    with open("Fits/cross_sections", "wb") as f:
+        pickle.dump(cross_section_total, f)

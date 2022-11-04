@@ -1,6 +1,6 @@
-from imports import *
-from cross_sections import cross_section_total, cross_section_GR
-from differential_flux import astro_flux, atmo_flux
+from .imports import *
+from .cross_sections import cross_section_GR
+from .differential_flux import astro_flux, atmo_flux
 
 class Neutrino():
     def __init__(self, flavor, anti) -> None:
@@ -11,7 +11,7 @@ class Neutrino():
         self.sigma = cross_section_total[anti]
 
         if flavor == "e" and anti:
-            self.GR = lambda E: cross_section_GR
+            self.GR = cross_section_GR
         else:
             self.GR = lambda E: 0
 
