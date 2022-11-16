@@ -2,10 +2,10 @@ from .imports import *
 from .neutrinos import Neutrino
 from .cross_sections import GR_a, GR_b
 
-def integrand(E, theta, dN_dE, flux_type, sigma, GR, attenuation):
+def integrand(E, theta, dN_dE, flux_type, sigma, GR, attenuation, month):
     """The integrand sigma * dN/dE * the attenuation factor."""
     integrand = sigma(E) + 10/18 * GR(E)
-    integrand *= dN_dE(E, theta, flux_type) * np.sin(theta)
+    integrand *= dN_dE(E, theta, flux_type, month) * np.sin(theta)
 
     if attenuation:
         #exponent = avg_rho_earth * x(theta)
@@ -15,13 +15,13 @@ def integrand(E, theta, dN_dE, flux_type, sigma, GR, attenuation):
     
     return integrand
 
-def event_rate(flavor, anti, flux_type, E_bounds, theta_bounds, attenuation=True, GR_only=False):
+def event_rate(flavor, anti, flux_type, E_bounds, theta_bounds, month="January", attenuation=True, GR_only=False):
     """Returns the yearly rate of neutrinos in the detector for a given neutrino type and flux type."""
     nu = Neutrino(flavor, anti)
     if GR_only: nu.sigma = lambda E: 0
 
     sigma, GR, dN_dE = nu.sigma, nu.GR, nu.dN_dE
-    args = (dN_dE, flux_type, sigma, GR, attenuation)
+    args = (dN_dE, flux_type, sigma, GR, attenuation, month)
     E_a, E_b = E_bounds
 
     if E_a <= GR_a and GR_b <= E_b:

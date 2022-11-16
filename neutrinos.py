@@ -18,12 +18,12 @@ class Neutrino():
         # For astro flux
         self.string = "total_" + ("anti" if anti else "") + "nu" + flavor
 
-    def dN_dE(self, E, theta, flux_type):
+    def dN_dE(self, E, theta, flux_type, month):
         if flux_type == "astro":
             return astro_flux(E)
         elif flux_type == "atmo":
-            return atmo_flux(E, theta, self.string)
+            return atmo_flux(E, theta, self.string, month)
         elif flux_type == "total":
-            return astro_flux(E) + atmo_flux(E, theta, self.string)
+            return astro_flux(E) + atmo_flux(E, theta, self.string, month)
         else:
             raise TypeError

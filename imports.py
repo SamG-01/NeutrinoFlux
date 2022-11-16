@@ -42,3 +42,5 @@ with open(path + "/Fits/cross_sections", "rb") as f:
     cross_section_total = pickle.load(f)
 with open(path + "/Fits/attenuation_function", "rb") as f:
     attenuation_function = pickle.load(f)
+with open(path + "/Fits/atmo_flux", "rb") as f:
+    flux_funcs = pickle.load(f)
