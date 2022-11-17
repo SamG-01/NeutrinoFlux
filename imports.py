@@ -26,11 +26,13 @@ import crflux.models as pm
 V_eff = (C.kilo)**3 # m**3; effective detector volume
 
 R_E = 6371 * C.kilo # m; radius of the earth
-atoms_earth = 1e50
-mass_earth = 5.97219e24 * 1e3 # gram
+#atoms_earth = 1.33e50
+#mass_earth = 5.97219e24 * 1e3 # gram
+#avg_molar_mass_earth = mass_earth / atoms_earth # roughly 36 g/mol
+avg_molar_mass_earth = 30 / C.N_A # 30 g/mol
 
 seconds_per_year = 31556925.2160000 # used to convert from events/second to events/year
-number_density_water = 6.02214076e23 / (C.centi)**3 # / m**3; water equivalent for N_A
+number_density_water = C.N_A / (C.centi)**3 # / m**3; water equivalent for N_A
 
 # Loads Pickled Fits
 import os
