@@ -56,22 +56,25 @@ cross_section_data = {
     True: [nubar_cc, nubar_nc, "Antineutrino"]
 } # argument: anti
 
-cross_section_total = {
-
+cross_sections = {
+    
 }
 
 for anti in [False, True]:
     cc, nc, name = cross_section_data[anti]
 
+    cc_fit = InterpolatedUnivariateSpline(E_range, cc, k=5)
+    nc_fit = InterpolatedUnivariateSpline(E_range, nc, k=5)
     tot_fit = InterpolatedUnivariateSpline(E_range, cc + nc, k=5)
 
-    cross_section_total[anti] = tot_fit
+    cross_sections[anti] = {
+        "nc": nc_fit,
+        "cc": cc_fit,
+        "tot": tot_fit
+    }
 
     # Cross Section Plotting
     if __name__ == "__main__":
-        cc_fit = InterpolatedUnivariateSpline(E_range, cc, k=5)
-        nc_fit = InterpolatedUnivariateSpline(E_range, nc, k=5)
-
         plt.plot(E_range, cc_fit(E_range), label="CC")
         plt.plot(E_range, nc_fit(E_range), label="NC")
         plt.plot(E_range, tot_fit(E_range), label="TOT")
@@ -92,4 +95,4 @@ for anti in [False, True]:
 
 if __name__ == "__main__":
     with open("Fits/cross_sections", "wb") as f:
-        pickle.dump(cross_section_total, f)
+        pickle.dump(cross_sections, f)
