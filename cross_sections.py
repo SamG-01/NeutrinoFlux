@@ -1,4 +1,4 @@
-from .imports import *
+from NeutrinoFlux.imports import *
 
 # GR Contribution
 GR_bounds = GR_a, GR_b = (4*C.peta, 8*C.peta)

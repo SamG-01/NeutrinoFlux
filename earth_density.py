@@ -1,4 +1,4 @@
-from .imports import *
+from NeutrinoFlux.imports import *
 
 # Distance Functions
 def x(theta):
