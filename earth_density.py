@@ -51,7 +51,7 @@ def rho_earth_full(r):
         ]
     ) * 1/(C.centi)**3 # g/m**3
     
-    # Convert g/m**3 to number/m**3 using total number of molecules in earth and total mass of earth
+    # Convert g/m**3 to nucleons/m**3 using ratio of nucleons/g
     rho *= nucleons_per_gram # molecules/m**3
     
     return rho
@@ -68,7 +68,7 @@ if __name__ == "__main__":
         plt.plot(Z, rho, label=f"$\\theta = {n:.1f}\pi$")
 
     plt.xlabel("Distance Penetrated (m)")
-    plt.ylabel("Number Density (molecules/m$^3$)")
+    plt.ylabel("Number Density (nucleons/m$^3$)")
     plt.title("Density Profile of the Earth")
     plt.legend()
     plt.show()
