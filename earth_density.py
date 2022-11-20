@@ -12,8 +12,7 @@ def r(z, theta):
 
 # Density Functions
 
-#avg_rho_earth = number_density_water * 5.51/.997
-avg_rho_earth = 5.51/(C.centi)**3 / avg_molar_mass_earth # mean density of the earth
+avg_rho_earth = 5.51/(C.centi)**3 * nucleons_per_gram # mean nucleon number density of the earth, in m^-3
 
 def rho_earth_average(r):
     """Returns the average density of the earth."""
@@ -53,7 +52,7 @@ def rho_earth_full(r):
     ) * 1/(C.centi)**3 # g/m**3
     
     # Convert g/m**3 to number/m**3 using total number of molecules in earth and total mass of earth
-    rho /= avg_molar_mass_earth # molecules/m**3
+    rho *= nucleons_per_gram # molecules/m**3
     
     return rho
 
