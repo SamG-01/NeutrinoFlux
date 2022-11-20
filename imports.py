@@ -15,7 +15,7 @@ from scipy.interpolate import InterpolatedUnivariateSpline, RectBivariateSpline
 from uncertainties import ufloat
 import uncertainties.unumpy as unp
 
-## MCEq
+## MCEq (for atmo flux)
 ###import solver related modules
 from MCEq.core import MCEqRun
 import mceq_config
@@ -33,7 +33,7 @@ nucleons_per_gram = 1/nucleon_mass # used to convert mass density to number dens
 seconds_per_year = 31556925.2160000 # used to convert from events/second to events/year
 number_density_water = C.N_A / (C.centi)**3 # / m**3; water equivalent for N_A
 
-# Loads Pickled Fits
+# Loads Pickled Fit Functions
 import os
 import dill as pickle
 

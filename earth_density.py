@@ -2,7 +2,7 @@ from NeutrinoFlux.imports import *
 
 # Distance Functions
 def x(theta):
-    """Distance a particle must pass through the earth before reaching the detector."""
+    """Distance through the earth a particle must penetrate before reaching the detector."""
     return max(2 * R_E * np.cos(theta), 0)
 
 def r(z, theta):
@@ -11,17 +11,16 @@ def r(z, theta):
     return r
 
 # Density Functions
-
 avg_rho_earth = 5.51/(C.centi)**3 * nucleons_per_gram # mean nucleon number density of the earth, in m^-3
 
 def rho_earth_average(r):
-    """Returns the average density of the earth."""
+    """Returns the average nucleon number density of the earth."""
     return avg_rho_earth
 
 def rho_earth_full(r):
-    """Returns the number density at a point in the earth as a function of the radius."""
+    """Returns the nucleon number density at a point in the earth as a function of the radius. Taken from the Preliminary Earth Model."""
     y = r/R_E
-    r /= 1e3
+    r /= C.kilo # convert to km
     
     rho = np.piecewise(
         r,
@@ -51,12 +50,13 @@ def rho_earth_full(r):
         ]
     ) * 1/(C.centi)**3 # g/m**3
     
-    # Convert g/m**3 to nucleons/m**3 using ratio of nucleons/g
+    # Convert g/m**3 to nucleons/m**3 using the ratio of nucleons/g
     rho *= nucleons_per_gram # molecules/m**3
     
     return rho
 
 def _rho_earth(z, theta):
+    """Returns the nucleon number density as a function of penetration distance z and penetration angle theta."""
     return rho_earth_full(r(z, theta))
 
 # Density Plotting

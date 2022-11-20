@@ -42,7 +42,7 @@ if __name__ == "__main__":
 
     print("Resonant Cross Section:", max(_sigma_GR(GR_range)))
 
-# NC and CC Contribution
+# Performs fitting for the NC and CC cross sections.
 files = [path + "/Cross Section Data/total_nu" + name + "_iso_NLO_HERAPDF1.5NLO_EIG.dat" for name in ("_CC", "_NC", "bar_NC", "bar_CC")]
 
 nu_cc, nu_nc, nubar_nc, nubar_cc = 1e-27 * (C.centi)**2 * np.array([
@@ -56,9 +56,7 @@ cross_section_data = {
     True: [nubar_cc, nubar_nc, "Antineutrino"]
 } # argument: anti
 
-cross_sections = {
-    
-}
+cross_sections = {}
 
 for anti in [False, True]:
     cc, nc, name = cross_section_data[anti]
