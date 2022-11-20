@@ -24,8 +24,8 @@ class Neutrino():
         # Name: for accessing atmo flux function
         self.string = "_" + ("anti" if anti else "") + "nu" + flavor
 
-    def dN_dE(self, E, theta, flux_type, month, atmo_source="total"):
-        """Returns the differential flux dN/dE(E, theta) for a given neutrino and flux type (astro or atmo). If atmo, arguments for the month (January or July) and the source (total, pi, k, pr, or conv)."""
+    def diff_flux(self, E, theta, flux_type, month, atmo_source="total"):
+        """Returns the differential flux Phi(E, theta) for a given neutrino and flux type (astro or atmo). If atmo, arguments for the month (January or July) and the source (total, pi, k, pr, or conv)."""
 
         if flux_type == "astro":
             return astro_flux(E)

@@ -2,10 +2,10 @@ from NeutrinoFlux.imports import *
 from NeutrinoFlux.neutrinos import Neutrino
 from NeutrinoFlux.cross_sections import GR_a, GR_b
 
-def integrand(E, theta, dN_dE, flux_type, sigma, sigma_GR, attenuation, month, atmo_source):
+def integrand(E, theta, diff_flux, flux_type, sigma, sigma_GR, attenuation, month, atmo_source):
     """The integrand sigma * dN/dE * the attenuation factor."""
     integrand = sigma(E) + 10/18 * sigma_GR(E)
-    integrand *= dN_dE(E, theta, flux_type, month, atmo_source) * np.sin(theta)
+    integrand *= diff_flux(E, theta, flux_type, month, atmo_source) * np.sin(theta)
 
     if attenuation:
         exponent = attenuation_function(theta)
@@ -19,7 +19,7 @@ def event_rate(nu, flux_type, E_bounds, theta_bounds, atmo_source="total", month
     
     if GR_only: nu.sigma = lambda E: 0
 
-    args = (nu.dN_dE, flux_type, nu.sigma, nu.sigma_GR, attenuation, month, atmo_source)
+    args = (nu.diff_flux, flux_type, nu.sigma, nu.sigma_GR, attenuation, month, atmo_source)
     E_a, E_b = E_bounds
 
     # Integrates the GR range of 4-8 PeV separately
