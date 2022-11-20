@@ -91,7 +91,7 @@ if __name__ == "__main__":
     plt.plot(angles, attenuation, linestyle="none", marker=".", markersize=3, label="Actual Points")
 
     plt.xlabel("$\\theta$ (rad)")
-    plt.ylabel("$\int_0^{x(\\theta)}{\\rho(r(x', \\theta)) \\: d x'}$ (m$^{-2}$)")
+    plt.ylabel("$\\alpha(\\theta) := \int_0^{x(\\theta)}{\\rho(r(z, \\theta)) \\: d z}$ (m$^{-2}$)")
     plt.title("Attenuation Integral")
     plt.legend()
     plt.show()
