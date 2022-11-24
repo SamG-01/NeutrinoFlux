@@ -7,7 +7,8 @@ def x(theta):
 
 def r(z, theta):
     """Returns the radius of the earth as a function of the angle theta and the penetration distance z = x'."""
-    r = (R_E**2 + z**2 - x(theta) * z)**(0.5)
+    X = x(theta)
+    r = (R_E**2 + (X - z)**2 - X * (X - z))**(0.5)
     return r
 
 # Density Functions
