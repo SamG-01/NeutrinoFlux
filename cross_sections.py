@@ -1,31 +1,53 @@
 from NeutrinoFlux.imports import *
 
-# GR Contribution
-GR_bounds = GR_a, GR_b = (4*C.peta, 8*C.peta)
+# CrossSection class
+class CrossSection():
+    """Class containing the functions, bounds, and number of targets per mass for a given cross section."""
+    def __init__(self, name, anti, func, E_domain, targets_per_gram_earth, targets_per_gram_water) -> None:
+        # basic properties: name, and whether it applies to neutrinos or antineutrinos
+        self.name = name
+        self.anti = anti
+        
+        # sigma(E) function and its domain (domain is all energies if True). sigma(E) = 0 outside of this domain
+        self.func = func # input is E in eV, output is sigma in m^2
+        self.E_domain = E_domain
 
-def _sigma_GR(E):
+        # targets per gram
+        self.targets_per_gram_earth = targets_per_gram_earth
+        self.targets_per_gram_water = targets_per_gram_water
+
+    def eval(self, E):
+        """Evaluates the cross section at given bounds."""
+        if self.E_domain == True:
+            return self.func(E)
+
+        E_a, E_b = self.E_domain
+        if E_a <= E <= E_b:
+            return self.func(E)
+        else: return 0
+
+# GR Contribution
+GR_bounds = GR_a, GR_b = (4e15, 8e15)
+
+def cross_section_GR(E):
     """Gives the electron antineutrino cross section for GR events. Source: PDG 2021."""
-    GF2 = 1.3604656e-10 * (C.giga)**(-4) # eV**(-4)
-    MW2 = 6460.783641 * (C.giga)**2 # eV**2
-    GeV2_MBARN = 0.3893796623 * (C.giga)**2 * 1e-27 * (C.centi)**2 # eV**2 * m**2
+    GF2 = 1.3604656e-10 * (1e9)**(-4) # eV**(-4)
+    MW2 = 6460.783641 * (1e9)**2 # eV**2
+    GeV2_MBARN = 0.3893796623 * (1e9)**2 * 1e-27 * (1e-2)**2 # eV**2 * m**2
     GW2 = 6.935717E-4 # unitless
     RWmu =  0.1057 # unitless
 
     crs0 = GF2*MW2/np.pi*GeV2_MBARN
-    m_electron = 5.10999E-4 * C.giga # eV
+    m_electron = 5.10999E-4 * 1e9 # eV
     SW = 2*m_electron*E/MW2
     sigma = crs0*SW/( (1 - SW)*(1 - SW) + GW2)/RWmu/3
     return sigma
-
-def cross_section_GR(E):
-    """Implements the bounds of the GR cross section."""
-    return _sigma_GR(E) if GR_a <= E <= GR_b else 0
 
 # GR Plotting
 if __name__ == "__main__":
     E_res = 6.3e15 #* eV
     GR_range = np.linspace(0, 10e15)
-    plt.plot(GR_range, _sigma_GR(GR_range), label="GR")
+    plt.plot(GR_range, cross_section_GR(GR_range), label="GR")
     plt.axvline(x=E_res, linestyle="dashed", label="Resonance Energy")
 
     #plt.xscale('log')
@@ -38,7 +60,7 @@ if __name__ == "__main__":
     plt.legend()
     plt.show()
 
-    print("Resonant Cross Section:", max(_sigma_GR(GR_range)))
+    print("Resonant Cross Section:", max(cross_section_GR(GR_range)))
 
 # Performs fitting for the NC and CC cross sections.
 files = [path + "/Cross Section Data/total_nu" + name + "_iso_NLO_HERAPDF1.5NLO_EIG.dat" for name in ("_CC", "_NC", "bar_NC", "bar_CC")]
@@ -64,10 +86,11 @@ for anti in [False, True]:
     tot_fit = InterpolatedUnivariateSpline(E_range, cc + nc, k=5)
 
     cross_sections[anti] = {
-        "nc": nc_fit,
-        "cc": cc_fit,
-        "tot": tot_fit
+        "nc": CrossSection("nc", anti, nc_fit, True, nucleons_per_gram_earth, nucleons_per_gram_water),
+        "cc": CrossSection("cc", anti, nc_fit, True, nucleons_per_gram_earth, nucleons_per_gram_water)
     }
+
+    cross_sections["GR"] = CrossSection("GR", anti, cross_section_GR, GR_bounds, electrons_per_gram_earth, electrons_per_gram_water)
 
     # Cross Section Plotting
     if __name__ == "__main__":

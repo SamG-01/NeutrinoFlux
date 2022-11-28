@@ -1,5 +1,5 @@
 from NeutrinoFlux.imports import *
-from NeutrinoFlux.cross_sections import cross_section_GR
+from NeutrinoFlux.cross_sections import CrossSection, cross_section_GR, GR_bounds
 from NeutrinoFlux.differential_flux import astro_flux, atmo_flux
 
 class Neutrino():
@@ -11,18 +11,19 @@ class Neutrino():
         self.flavor = flavor # choices: e, tau, mu
         self.anti = anti # choices: True, False
 
-        # Cross Section Functions 
-        self.sigma_nc = cross_sections[anti]["nc"]
-        self.sigma_cc = cross_sections[anti]["cc"]
-        self.sigma = cross_sections[anti]["tot"]
-
-        if flavor == "e" and anti:
-            self.sigma_GR = cross_section_GR
-        else:
-            self.sigma_GR = lambda E: 0
-
         # Name: for accessing atmo flux function
         self.string = "_" + ("anti" if anti else "") + "nu" + flavor
+
+        # Cross Section Functions: dictionary. can be modified
+        self.sigma = {
+            "nc": cross_sections[anti]["nc"],
+            "cc": cross_sections[anti]["cc"]
+        }
+        if flavor == "e" and anti:
+            self.sigma["GR"] = cross_sections["GR"]
+        else:
+            self.sigma["GR"] = CrossSection("blank", anti, lambda E: 0, True, 0, 0)
+
 
     def diff_flux(self, E, theta, flux_type, month, atmo_source="total"):
         """Returns the differential flux Phi(E, theta) for a given neutrino and flux type (astro or atmo). If atmo, arguments for the month (January or July) and the source (total, pi, k, pr, or conv)."""

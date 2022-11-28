@@ -24,14 +24,18 @@ import crflux.models as pm
 
 # Constants
 V_eff = (C.kilo)**3 # m**3; effective detector volume
+mass_density_ice = 0.917 / (C.centi)**3 # g/m^3
 
 R_E = 6371 * C.kilo # m; radius of the earth
 
 nucleon_mass = 1.67e-27 * C.kilo # gram
-nucleons_per_gram = 1/nucleon_mass # used to convert mass density to number density
+nucleons_per_gram_earth = 1/nucleon_mass # used to convert mass density to number density
+electrons_per_gram_earth = 0.5 * nucleons_per_gram_earth # number of electrons = number of protons, which make up half the nucleon mass
+
+nucleons_per_gram_water = nucleons_per_gram_earth
+electrons_per_gram_water = 10/18 * nucleons_per_gram_water # 10 electrons per 18 nucleons
 
 seconds_per_year = 31556925.2160000 # used to convert from events/second to events/year
-number_density_water = C.N_A / (C.centi)**3 # / m**3; water equivalent for N_A
 
 # Loads Pickled Fit Functions
 import os
