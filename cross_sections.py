@@ -87,7 +87,7 @@ for anti in [False, True]:
 
     cross_sections[anti] = {
         "nc": CrossSection("nc", anti, nc_fit, True, nucleons_per_gram_earth, nucleons_per_gram_water),
-        "cc": CrossSection("cc", anti, nc_fit, True, nucleons_per_gram_earth, nucleons_per_gram_water)
+        "cc": CrossSection("cc", anti, cc_fit, True, nucleons_per_gram_earth, nucleons_per_gram_water)
     }
 
     cross_sections["GR"] = CrossSection("GR", anti, cross_section_GR, GR_bounds, electrons_per_gram_earth, electrons_per_gram_water)

@@ -3,7 +3,7 @@ from NeutrinoFlux.neutrinos import Neutrino
 from NeutrinoFlux.cross_sections import GR_a, GR_b
 
 def integrand(E, theta, diff_flux, flux_type, sigma, attenuation, month, atmo_source):
-    """The integrand sigma * dN/dE * the attenuation factor."""
+    """The integrand sigma * Phi * the attenuation factor."""
     integrand = mass_density_ice * sum(cs.eval(E) * cs.targets_per_gram_water for cs in sigma.values())
     integrand *= diff_flux(E, theta, flux_type, month, atmo_source) * np.sin(theta)
 
