@@ -12,14 +12,14 @@ def r(z, theta):
     return r
 
 # Density Functions
-avg_rho_earth = 5.51/(C.centi)**3 * nucleons_per_gram # mean nucleon number density of the earth, in m^-3
+avg_rho_earth = 5.51/(C.centi)**3 # mean mass density of the earth, in g/m^3
 
 def rho_earth_average(r):
-    """Returns the average nucleon number density of the earth."""
+    """Returns the average mass density of the earth."""
     return avg_rho_earth
 
 def rho_earth_full(r):
-    """Returns the nucleon number density at a point in the earth as a function of the radius. Taken from the Preliminary Earth Model."""
+    """Returns the mass density at a point in the earth as a function of the radius. Taken from the Preliminary Earth Model."""
     y = r/R_E
     r /= C.kilo # convert to km
     
@@ -51,9 +51,6 @@ def rho_earth_full(r):
         ]
     ) * 1/(C.centi)**3 # g/m**3
     
-    # Convert g/m**3 to nucleons/m**3 using the ratio of nucleons/g
-    rho *= nucleons_per_gram # molecules/m**3
-    
     return rho
 
 def _rho_earth(z, theta):
@@ -69,7 +66,7 @@ if __name__ == "__main__":
         plt.plot(Z, rho, label=f"$\\theta = {n:.1f}\pi$")
 
     plt.xlabel("Distance Penetrated (m)")
-    plt.ylabel(r"Nucleon Number Density (m$^{-3}$)")
+    plt.ylabel(r"Mass Density ($g/m^3$)")
     plt.title("Density Profile of the Earth")
     plt.legend()
     plt.show()
@@ -92,7 +89,7 @@ if __name__ == "__main__":
     plt.plot(angles, attenuation, linestyle="none", marker=".", markersize=3, label="Actual Points")
 
     plt.xlabel("$\\theta$ (rad)")
-    plt.ylabel("$\\alpha(\\theta) := \int_0^{x(\\theta)}{\\rho(r(z, \\theta)) \\: d z}$ (m$^{-2}$)")
+    plt.ylabel("$\\alpha(\\theta) := \int_0^{x(\\theta)}{\\rho(r(z, \\theta)) \\: d z}$ ($g/m^2$)")
     plt.title("Attenuation Parameter")
     plt.legend()
     plt.show()
