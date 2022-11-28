@@ -52,6 +52,6 @@ def event_rate(nu, flux_type, E_bounds, theta_bounds, atmo_source="total", month
                 )[0]
 
     # Integrates over phi, and multiplies by other conversion factors to get the yearly rate.
-    yearly_rate = 2 * np.pi * number_density_water * V_eff * rate_seconds * seconds_per_year
+    yearly_rate = 2 * np.pi * number_density_ice * V_eff * rate_seconds * seconds_per_year
 
     return yearly_rate

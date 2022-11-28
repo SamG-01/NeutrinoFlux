@@ -31,7 +31,7 @@ nucleon_mass = 1.67e-27 * C.kilo # gram
 nucleons_per_gram = 1/nucleon_mass # used to convert mass density to number density
 
 seconds_per_year = 31556925.2160000 # used to convert from events/second to events/year
-number_density_water = C.N_A / (C.centi)**3 # / m**3; water equivalent for N_A
+number_density_ice = 0.917 / (C.centi)**3 * nucleons_per_gram # / m**3; water equivalent for N_A
 
 # Loads Pickled Fit Functions
 import os
