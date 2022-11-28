@@ -9,7 +9,7 @@ def integrand(E, theta, diff_flux, flux_type, sigma, sigma_GR, attenuation, mont
 
     if attenuation:
         exponent = attenuation_function(theta)
-        exponent *= -1 * (sigma(E) + sigma_GR(E))
+        exponent *= -1 * (sigma(E) + sigma_GR(E)/2)
         integrand *= np.exp(exponent)
     
     return integrand
