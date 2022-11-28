@@ -5,10 +5,7 @@ GR_bounds = GR_a, GR_b = (4*C.peta, 8*C.peta)
 
 def _sigma_GR(E):
     """Gives the electron antineutrino cross section for GR events. Source: PDG 2021."""
-    #E /= C.giga # Convert E from eV to GeV
     GF2 = 1.3604656e-10 * (C.giga)**(-4) # eV**(-4)
-    #    MW2 = 6467.858929
-    #PDG 2021
     MW2 = 6460.783641 * (C.giga)**2 # eV**2
     GeV2_MBARN = 0.3893796623 * (C.giga)**2 * 1e-27 * (C.centi)**2 # eV**2 * m**2
     GW2 = 6.935717E-4 # unitless
@@ -21,6 +18,7 @@ def _sigma_GR(E):
     return sigma
 
 def cross_section_GR(E):
+    """Implements the bounds of the GR cross section."""
     return _sigma_GR(E) if GR_a <= E <= GR_b else 0
 
 # GR Plotting

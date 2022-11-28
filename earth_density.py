@@ -69,7 +69,7 @@ if __name__ == "__main__":
         plt.plot(Z, rho, label=f"$\\theta = {n:.1f}\pi$")
 
     plt.xlabel("Distance Penetrated (m)")
-    plt.ylabel("Number Density (nucleons/m$^3$)")
+    plt.ylabel(r"Nucleon Number Density (m$^{-3}$)")
     plt.title("Density Profile of the Earth")
     plt.legend()
     plt.show()
@@ -93,6 +93,6 @@ if __name__ == "__main__":
 
     plt.xlabel("$\\theta$ (rad)")
     plt.ylabel("$\\alpha(\\theta) := \int_0^{x(\\theta)}{\\rho(r(z, \\theta)) \\: d z}$ (m$^{-2}$)")
-    plt.title("Attenuation Integral")
+    plt.title("Attenuation Parameter")
     plt.legend()
     plt.show()
