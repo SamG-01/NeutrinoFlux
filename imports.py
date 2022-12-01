@@ -40,7 +40,7 @@ path = os.path.abspath(os.path.dirname(os.path.abspath(__file__)))
 
 with open(path + "/Fits/cross_sections", "rb") as f:
     cross_sections = pickle.load(f)
-with open(path + "/Fits/attenuation_function", "rb") as f:
-    attenuation_function = pickle.load(f)
+with open(path + "/Fits/attenuation_parameter", "rb") as f:
+    attenuation_parameter = pickle.load(f)
 with open(path + "/Fits/atmo_flux", "rb") as f:
     flux_funcs = pickle.load(f)

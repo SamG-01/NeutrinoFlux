@@ -2,15 +2,19 @@ from NeutrinoFlux.imports import *
 from NeutrinoFlux.neutrinos import Neutrino
 from NeutrinoFlux.cross_sections import GR_a, GR_b
 
+def attenuation(E, theta, sigma):
+    """Returns the absorption coefficient at a given energy and angle for a given cross section."""
+    exponent = attenuation_parameter(theta)
+    exponent *= -1 * sum(cs.eval(E) * cs.targets_per_gram_earth for cs in sigma.values())
+    return np.exp(exponent)
+
 def integrand(E, theta, diff_flux, flux_type, sigma, attenuation, month, atmo_source):
     """The integrand sigma * Phi * the attenuation factor."""
     integrand = mass_density_ice * sum(cs.eval(E) * cs.targets_per_gram_water for cs in sigma.values())
     integrand *= diff_flux(E, theta, flux_type, month, atmo_source) * np.sin(theta)
 
     if attenuation:
-        exponent = attenuation_function(theta)
-        exponent *= -1 * sum(cs.eval(E) * cs.targets_per_gram_earth for cs in sigma.values())
-        integrand *= np.exp(exponent)
+        integrand *= attenuation(E, theta, sigma)
     
     return integrand
 
