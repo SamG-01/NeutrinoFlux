@@ -46,7 +46,7 @@ def cross_section_GR(E):
 # GR Plotting
 if __name__ == "__main__":
     E_res = 6.3e15 #* eV
-    GR_range = np.linspace(0, 10e15)
+    GR_range = np.linspace(4e15, 8e15)
     plt.plot(GR_range, cross_section_GR(GR_range), label="GR")
     plt.axvline(x=E_res, linestyle="dashed", label="Resonance Energy")
 
