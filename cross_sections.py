@@ -30,7 +30,7 @@ class CrossSection():
 GR_bounds = GR_a, GR_b = (4e15, 8e15)
 
 def cross_section_GR(E):
-    """Gives the electron antineutrino cross section for GR events. Source: PDG 2021."""
+    """Gives the electron antineutrino cross section for GR events."""
     GF2 = 1.3604656e-10 * (1e9)**(-4) # eV**(-4)
     MW2 = 6460.783641 * (1e9)**2 # eV**2
     GeV2_MBARN = 0.3893796623 * (1e9)**2 * 1e-27 * (1e-2)**2 # eV**2 * m**2
