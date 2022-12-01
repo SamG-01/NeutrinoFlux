@@ -22,9 +22,8 @@ class CrossSection():
             return self.func(E)
 
         E_a, E_b = self.E_domain
-        if E_a <= E <= E_b:
-            return self.func(E)
-        else: return 0
+        in_domain = np.logical_and(E_a <= E, E <= E_b)
+        return np.where(in_domain, self.func(E), 0)
 
 # GR Contribution
 GR_bounds = GR_a, GR_b = (4e15, 8e15)
