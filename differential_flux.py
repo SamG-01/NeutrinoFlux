@@ -6,13 +6,13 @@ flux_units = 1/C.giga * 1/C.centi**2 # 1/(eV * m**2 * second * steradian)
 # Astro Flux
 C0 = 3e-18 * flux_units
 E0 = 100 * C.tera #* eV
-gamma = ufloat(2.53, 0.07) # works for each neutrino flavor
-phi_astro = ufloat(1.66, 0.27) # combined for nu + nubar
+gamma = 2.53 # works for each neutrino flavor
+phi_astro = 1.66 # combined for nu + nubar
 
 def astro_flux(E):
     """Flux law for astro neutrinos."""
     # astro flux for nu and nubar is approximately the same, so we divide phi_astro by 2
-    return C0 * phi_astro.n / 2 * (E/E0)**(-gamma.n)
+    return C0 * phi_astro / 2 * (E/E0)**(-gamma)
 
 # Atmospheric Flux
 if __name__ == "__main__": # Performs fitting for atmo flux
@@ -44,7 +44,7 @@ if __name__ == "__main__": # Performs fitting for atmo flux
     mceq_run.solve()
 
     #obtain energy grid (fixed) of the solution for the x-axis of the plots
-    e_grid = mceq_run.e_grid * C.giga
+    e_grid = mceq_run.e_grid * C.giga # converts from eV to GeV
 
     #Define equidistant grid in cos(theta)
     angles = np.arccos(np.linspace(1,-1,20))*180./np.pi
@@ -75,7 +75,6 @@ if __name__ == "__main__": # Performs fitting for atmo flux
                 # Interpolates the grid of solutions in theta, E into full functions for each flux source
                 for flux_source in atmo_flux_sources:
                     flux_funcs[month][name][flux_source] = RectBivariateSpline(angles, e_grid, flux_data[flux_source])
-                    # Note that e_grid is in GeV!
 
     with open("Fits/atmo_flux", "wb") as f:
         pickle.dump(flux_funcs, f)

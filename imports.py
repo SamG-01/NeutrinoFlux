@@ -7,13 +7,8 @@ import matplotlib.pyplot as plt
 import scipy.constants as C
 
 ## SciPy Numerical Methods
-from scipy.optimize import curve_fit
 from scipy.integrate import quad, nquad
 from scipy.interpolate import InterpolatedUnivariateSpline, RectBivariateSpline
-
-## Uncertainty Handling
-from uncertainties import ufloat
-import uncertainties.unumpy as unp
 
 ## MCEq (for atmo flux)
 ###import solver related modules
