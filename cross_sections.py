@@ -1,4 +1,4 @@
-from NeutrinoFlux.imports import *
+from NeutrinoFlux.__init__ import *
 
 # CrossSection class
 class CrossSection():

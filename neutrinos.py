@@ -1,4 +1,4 @@
-from NeutrinoFlux.imports import *
+from NeutrinoFlux.__init__ import *
 from NeutrinoFlux.cross_sections import CrossSection, cross_section_GR, GR_bounds
 from NeutrinoFlux.differential_flux import astro_flux, atmo_flux
 

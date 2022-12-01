@@ -1,4 +1,4 @@
-from NeutrinoFlux.imports import *
+from NeutrinoFlux.__init__ import *
 #from NeutrinoFlux.neutrinos import default_neutrinos
 
 flux_units = 1/C.giga * 1/C.centi**2 # 1/(eV * m**2 * second * steradian)
