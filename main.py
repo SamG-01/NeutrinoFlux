@@ -8,12 +8,12 @@ def attenuation(E, theta, sigma):
     exponent *= -1 * sum(cs.eval(E) * cs.targets_per_gram_earth for cs in sigma.values())
     return np.exp(exponent)
 
-def integrand(E, theta, diff_flux, flux_type, sigma, attenuation, month, atmo_source):
+def integrand(E, theta, diff_flux, flux_type, sigma, atten, month, atmo_source):
     """The integrand sigma * Phi * the attenuation factor."""
     integrand = mass_density_ice * sum(cs.eval(E) * cs.targets_per_gram_water for cs in sigma.values())
     integrand *= diff_flux(E, theta, flux_type, month, atmo_source) * np.sin(theta)
 
-    if attenuation:
+    if atten:
         integrand *= attenuation(E, theta, sigma)
     
     return integrand
