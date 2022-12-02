@@ -1,5 +1,4 @@
 from NeutrinoFlux.__init__ import *
-from NeutrinoFlux.neutrinos import Neutrino
 from NeutrinoFlux.cross_sections import GR_a, GR_b
 
 def attenuation(E, theta, sigma):
