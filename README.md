@@ -2,7 +2,7 @@
 Predicts the yearly rate of neutrino events in the IceCube Neutrino Observatory at the south pole.
 
 ## Basic Usage
-As a quick example, the code below computes the yearly rate of electron neutrinos from astrophysical sources, from all zenith angles (relative to the north pole at 0 radians, with the south pole at the origin), for energies between $10^{13}$ and $10^{21}$ eV.
+As a quick example, the code below computes the yearly rate of electron neutrinos from astrophysical sources, from all zenith angles (relative to the north pole at $\theta = 0$ radians, with the south pole at the origin), for energies between $10^{13}$ and $10^{21}$ eV.
 
 ```python
 import numpy as np
@@ -34,7 +34,6 @@ rate = event_rate(
     },
     GR_only=True
 )
-print(rate)
 ```
 
 If I instead consider atmospheric tau neutrino flux from pion decay in July with energies only up to $10^{16}$ eV, I would write:
@@ -46,10 +45,9 @@ rate = event_rate(
     theta_bounds=full_theta_bounds,
     diff_flux_kwargs={
         "month": "July",
-        "atmo_flux_source": "pr"
+        "atmo_flux_source": "pi"
     }
 )
-print(rate)
 ```
 
 ## Background
