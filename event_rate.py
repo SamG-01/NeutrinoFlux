@@ -18,7 +18,7 @@ def integrand(E, theta, diff_flux, flux_type, sigma, atten, kwargs):
     return integrand
 
 def event_rate(nu, flux_type, E_bounds, theta_bounds, diff_flux_kwargs=None, atten=True, GR_only=False):
-    """Returns the yearly rate of neutrinos in the detector for a given neutrino type and flux type. If working with atmo flux, also can be configured based on the month of year and the source of the atmospheric flux."""
+    """Returns the yearly rate of neutrinos in the detector for a given neutrino type and flux type. The entries in the diff_flux_kwargs dict are passed into the neutrino's diff_flux function and thus will vary based on the type of flux being computed."""
     
     if diff_flux_kwargs == None: diff_flux_kwargs = {}
 
