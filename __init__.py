@@ -43,4 +43,4 @@ with open(path + "/Fits/cross_sections", "rb") as f:
 with open(path + "/Fits/attenuation_parameter", "rb") as f:
     attenuation_parameter = pickle.load(f)
 with open(path + "/Fits/atmo_flux", "rb") as f:
-    flux_funcs = pickle.load(f)
+    atmo_flux_funcs = pickle.load(f)

@@ -9,8 +9,13 @@ E0 = 100 * C.tera #* eV
 gamma = 2.53 # works for each neutrino flavor
 phi_astro = 1.66 # combined for nu + nubar
 
-def astro_flux(E):
+def astro_flux(E, theta, kwargs):
     """Flux law for astro neutrinos."""
+
+    # Retrieves arguments
+    gamma = kwargs.get("gamma", 2.53)
+    phi_astro = kwargs.get("phi_astro", 1.66)
+    
     # astro flux for nu and nubar is approximately the same, so we divide phi_astro by 2
     return C0 * phi_astro / 2 * (E/E0)**(-gamma)
 
@@ -50,15 +55,15 @@ if __name__ == "__main__": # Performs fitting for atmo flux
     angles = np.arccos(np.linspace(1,-1,20))*180./np.pi
 
     #Dictionary for results
-    flux_funcs = {}
+    atmo_flux_funcs = {}
 
     for month in ("January", "July"):
-        flux_funcs[month] = {}
+        atmo_flux_funcs[month] = {}
         mceq_run.set_density_model(('MSIS00_IC',('SouthPole',month)))
         for anti in (True, False):
             for flavor in ("e", "mu", "tau"):
                 name = "_" + ("anti" if anti else "") + "nu" + flavor
-                flux_funcs[month][name] = {}
+                atmo_flux_funcs[month][name] = {}
                 flux_data = {flux_source: [] for flux_source in atmo_flux_sources}
 
                 for theta in angles:
@@ -74,14 +79,14 @@ if __name__ == "__main__": # Performs fitting for atmo flux
 
                 # Interpolates the grid of solutions in theta, E into full functions for each flux source
                 for flux_source in atmo_flux_sources:
-                    flux_funcs[month][name][flux_source] = RectBivariateSpline(angles, e_grid, flux_data[flux_source])
+                    atmo_flux_funcs[month][name][flux_source] = RectBivariateSpline(angles, e_grid, flux_data[flux_source])
 
     with open("Fits/atmo_flux", "wb") as f:
-        pickle.dump(flux_funcs, f)
+        pickle.dump(atmo_flux_funcs, f)
 
     """
-    Complete structure of flux_funcs should look like this:
-    flux_funcs = {
+    Complete structure of atmo_flux_funcs should look like this:
+    atmo_flux_funcs = {
         "January": {
             "_antinue": {
                 "total": function,
@@ -98,15 +103,20 @@ if __name__ == "__main__": # Performs fitting for atmo flux
     }
     """
 
-def atmo_flux(E, theta, month, neutrino_name, flux_source):
+def atmo_flux(E, theta, kwargs):
     """Flux law for atmospheric neutrinos."""
+
+    # Retrieves kwargs
+    month = kwargs.get("month", "January")
+    neutrino_name = kwargs["self"].string
+    atmo_flux_source = kwargs.get("atmo_flux_source", "total")
 
     # MCEq defines theta=0 when neutrinos are coming down from the atmosphere, and theta>90 when they are up-going through the earth.
     # We have the opposite coordinate system, so we need to convert our angle first.
     theta = 180 * (1 - theta/np.pi)
 
     # Extracts the correct flux function associated with the last three parameters.
-    flux_func = flux_funcs[month][neutrino_name][flux_source]
+    flux_func = atmo_flux_funcs[month][neutrino_name][atmo_flux_source]
 
     # Computes the flux for a given angle and energy.
     flux = flux_func(theta, E)

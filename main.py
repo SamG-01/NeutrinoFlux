@@ -8,25 +8,27 @@ def attenuation(E, theta, sigma):
     exponent *= -1 * sum(cs.eval(E) * cs.targets_per_gram_earth for cs in sigma.values())
     return np.exp(exponent)
 
-def integrand(E, theta, diff_flux, flux_type, sigma, atten, month, atmo_source):
+def integrand(E, theta, diff_flux, flux_type, sigma, atten, kwargs):
     """The integrand sigma * Phi * the attenuation factor."""
     integrand = mass_density_ice * sum(cs.eval(E) * cs.targets_per_gram_water for cs in sigma.values())
-    integrand *= diff_flux(E, theta, flux_type, month, atmo_source) * np.sin(theta)
+    integrand *= diff_flux(E, theta, flux_type, kwargs) * np.sin(theta)
 
     if atten:
         integrand *= attenuation(E, theta, sigma)
     
     return integrand
 
-def event_rate(nu, flux_type, E_bounds, theta_bounds, atmo_source="total", month="January", attenuation=True, GR_only=False):
+def event_rate(nu, flux_type, E_bounds, theta_bounds, diff_flux_kwargs=None, atten=True, GR_only=False):
     """Returns the yearly rate of neutrinos in the detector for a given neutrino type and flux type. If working with atmo flux, also can be configured based on the month of year and the source of the atmospheric flux."""
     
+    if diff_flux_kwargs == None: diff_flux_kwargs = {}
+
     if GR_only:
         sigma = {"GR": nu.sigma["GR"]}
     else:
         sigma = nu.sigma
 
-    args = (nu.diff_flux, flux_type, sigma, attenuation, month, atmo_source)
+    args = (nu.diff_flux, flux_type, sigma, atten, diff_flux_kwargs)
     E_a, E_b = E_bounds
 
     # Integrates the GR range of 4-8 PeV separately

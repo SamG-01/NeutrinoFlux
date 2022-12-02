@@ -24,18 +24,26 @@ class Neutrino():
         else:
             self.sigma["GR"] = CrossSection("blank", anti, lambda E: 0, True, 0, 0)
 
+        # Differential flux functions (default)
+        self.flux_funcs = {
+            "atmo": atmo_flux,
+            "astro": astro_flux
+        }
 
-    def diff_flux(self, E, theta, flux_type, month, atmo_source="total"):
-        """Returns the differential flux Phi(E, theta) for a given neutrino and flux type (astro or atmo). If atmo, arguments for the month (January or July) and the source (total, pi, k, pr, or conv)."""
+    def diff_flux(self, E, theta, flux_type, kwargs):
+        """Returns the differential flux Phi(E, theta) for a given neutrino and flux type (astro or atmo).
+        
+        If astro, there are additional arguments for the spectral index gamma and the normalization phi_astro.
+        
+        If atmo, there are additional arguments for the month (January or July) and the flux_source (total, pi, k, pr, or conv)."""
 
-        if flux_type == "astro":
-            return astro_flux(E)
-        elif flux_type == "atmo":
-            return atmo_flux(E, theta, month, self.string, atmo_source)
-        elif flux_type == "total":
-            return astro_flux(E) + atmo_flux(E, theta, month, self.string, atmo_source)
+        kwargs["self"] = self # for when the flux depends on the neutrino type
+
+        if flux_type == "total":
+            return sum(flux(E, theta, kwargs) for flux in self.flux_funcs.values())
         else:
-            raise TypeError
+            flux_func = self.flux_funcs[flux_type]
+            return flux_func(E, theta, kwargs)
 
 # Some default neutrino objects for testing purposes
 default_neutrinos = {
