@@ -1,12 +1,10 @@
 from NeutrinoFlux.__init__ import *
 
-# CrossSection class
-class CrossSection():
-    """Class containing the functions, bounds, and number of targets per mass for a given cross section."""
-    def __init__(self, name, anti, func, E_domain, targets_per_gram_earth, targets_per_gram_water) -> None:
-        # basic properties: name, and whether it applies to neutrinos or antineutrinos
+class CrossSection:
+    """Class containing the function, bounds, and number of targets per mass for a given cross section."""
+    def __init__(self, name, func, E_domain, targets_per_gram_earth, targets_per_gram_water) -> None:
+        # name
         self.name = name
-        self.anti = anti
         
         # sigma(E) function and its domain (domain is all energies if True). sigma(E) = 0 outside of this domain
         self.func = func # input is E in eV, output is sigma in m^2
@@ -16,11 +14,12 @@ class CrossSection():
         self.targets_per_gram_earth = targets_per_gram_earth
         self.targets_per_gram_water = targets_per_gram_water
 
-    def eval(self, E):
-        """Evaluates the cross section at given bounds."""
+    def __call__(self, E):
+        """Evaluates the cross section for a given energy."""
         if self.E_domain == True:
             return self.func(E)
 
+        # Supports NumPy arrays
         E_a, E_b = self.E_domain
         in_domain = np.logical_and(E_a <= E, E <= E_b)
         return np.where(in_domain, self.func(E), 0)
@@ -61,7 +60,7 @@ if __name__ == "__main__":
 
     print("Resonant Cross Section:", max(cross_section_GR(GR_range)))
 
-# Performs fitting for the NC and CC cross sections.
+# Performs fitting for the NC and CC cross sections
 files = [path + "/Cross Section Data/total_nu" + name + "_iso_NLO_HERAPDF1.5NLO_EIG.dat" for name in ("_CC", "_NC", "bar_NC", "bar_CC")]
 
 nu_cc, nu_nc, nubar_nc, nubar_cc = 1e-27 * (C.centi)**2 * np.array([
@@ -75,8 +74,8 @@ cross_section_data = {
     True: [nubar_cc, nubar_nc, "Antineutrino"]
 } # argument: anti
 
+## Saving Files
 cross_sections = {}
-
 for anti in [False, True]:
     cc, nc, name = cross_section_data[anti]
 
@@ -85,11 +84,11 @@ for anti in [False, True]:
     tot_fit = InterpolatedUnivariateSpline(E_range, cc + nc, k=5)
 
     cross_sections[anti] = {
-        "nc": CrossSection("nc", anti, nc_fit, True, nucleons_per_gram_earth, nucleons_per_gram_water),
-        "cc": CrossSection("cc", anti, cc_fit, True, nucleons_per_gram_earth, nucleons_per_gram_water)
+        "nc": CrossSection("nc", nc_fit, True, nucleons_per_gram_earth, nucleons_per_gram_water),
+        "cc": CrossSection("cc", cc_fit, True, nucleons_per_gram_earth, nucleons_per_gram_water)
     }
 
-    cross_sections["GR"] = CrossSection("GR", anti, cross_section_GR, GR_bounds, electrons_per_gram_earth, electrons_per_gram_water)
+    cross_sections["GR"] = CrossSection("GR", cross_section_GR, GR_bounds, electrons_per_gram_earth, electrons_per_gram_water)
 
     # Cross Section Plotting
     if __name__ == "__main__":

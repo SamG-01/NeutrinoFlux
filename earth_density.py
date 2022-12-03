@@ -12,11 +12,9 @@ def r(z, theta):
     return r
 
 # Density Functions
-avg_d_earth = 5.51/(C.centi)**3 # mean mass density of the earth, in g/m^3
-
 def d_earth_average(r):
     """Returns the average mass density of the earth."""
-    return avg_d_earth
+    return 5.51/(C.centi)**3 # mean mass density of the earth, in g/m^3
 
 def d_earth_full(r):
     """Returns the mass density at a point in the earth as a function of the radius. Taken from the Preliminary Earth Model."""
@@ -84,7 +82,7 @@ if __name__ == "__main__":
     with open("Fits/attenuation_parameter", "wb") as f:
         pickle.dump(attenuation_parameter, f)
 
-    plt.plot(angles, [avg_d_earth * x(angle) for angle in angles], label="Average", linestyle="dashed", color="green")
+    plt.plot(angles, [d_earth_average(0) * x(angle) for angle in angles], label="Average", linestyle="dashed", color="green")
     plt.plot(angles, attenuation_parameter(angles), label="Actual Fit")
     plt.plot(angles, attenuation, linestyle="none", marker=".", markersize=3, label="Actual Points")
 

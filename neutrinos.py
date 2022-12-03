@@ -2,8 +2,9 @@ from NeutrinoFlux.__init__ import *
 from NeutrinoFlux.cross_sections import CrossSection, cross_section_GR, GR_bounds
 from NeutrinoFlux.differential_flux import astro_flux, atmo_flux
 
-class Neutrino():
-    """Class containing the properties of a high-energy neutrino, including its cross sections and differential flux laws."""
+class Neutrino:
+    """Class containing the properties of a neutrino, including its cross sections and differential flux laws."""
+
     def __init__(self, flavor, anti) -> None:
         """Defines the basic properties of a particular neutrino. Of note, the cross sections for the neutrino can be modified before being passed into the event_rate function in main.py."""
 
@@ -15,14 +16,13 @@ class Neutrino():
         self.string = "_" + ("anti" if anti else "") + "nu" + flavor
 
         # Cross Section Functions: dictionary. can be modified
-        self.sigma = {
+        self.cross_sections = {
             "nc": cross_sections[anti]["nc"],
             "cc": cross_sections[anti]["cc"]
         }
-        if flavor == "e" and anti:
-            self.sigma["GR"] = cross_sections["GR"]
-        else:
-            self.sigma["GR"] = CrossSection("blank", anti, lambda E: 0, True, 0, 0)
+
+        if anti and self.flavor == "e":
+            self.cross_sections["GR"] = cross_sections["GR"]
 
         # Differential flux functions (default)
         self.flux_funcs = {
@@ -30,6 +30,18 @@ class Neutrino():
             "astro": astro_flux
         }
 
+    def effective_volume(self, E):
+        """Returns the effective volume of the detector for a given neutrino at a certain energy."""
+        return (1e3)**3 # m^3; 1 km^3
+    
+    def attenuation(self, E, theta):
+        """Returns the absorption coefficient at a given energy and angle for a given cross section."""
+        cs = self.cross_sections
+        
+        exponent = -1 * attenuation_parameter(theta)
+        exponent *= sum(sigma(E) * sigma.targets_per_gram_earth for sigma in cs.values())
+        return np.exp(exponent)
+        
     def diff_flux(self, E, theta, flux_type, kwargs):
         """Returns the differential flux Phi(E, theta) for a given neutrino and flux type (astro or atmo).
         
@@ -44,6 +56,7 @@ class Neutrino():
         else:
             flux_func = self.flux_funcs[flux_type]
             return flux_func(E, theta, kwargs)
+
 
 # Some default neutrino objects for testing purposes
 default_neutrinos = {

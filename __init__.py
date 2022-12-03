@@ -18,7 +18,6 @@ import mceq_config
 import crflux.models as pm
 
 # Constants
-V_eff = (C.kilo)**3 # m**3; effective detector volume
 mass_density_ice = 0.917 / (C.centi)**3 # g/m^3
 
 R_E = 6371 * C.kilo # m; radius of the earth

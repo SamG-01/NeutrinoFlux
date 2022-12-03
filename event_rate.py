@@ -1,33 +1,29 @@
 from NeutrinoFlux.__init__ import *
 from NeutrinoFlux.cross_sections import GR_a, GR_b
 
-def attenuation(E, theta, sigma):
-    """Returns the absorption coefficient at a given energy and angle for a given cross section."""
-    exponent = attenuation_parameter(theta)
-    exponent *= -1 * sum(cs.eval(E) * cs.targets_per_gram_earth for cs in sigma.values())
-    return np.exp(exponent)
+def integrand(E, theta, nu, sigmas, flux_type, diff_flux_kwargs, atten):
+    """The integrand V_eff(E) * sigma(E) * Phi(E, theta) * attenuation(E, theta)."""
 
-def integrand(E, theta, diff_flux, flux_type, sigma, atten, kwargs):
-    """The integrand sigma * Phi * the attenuation factor."""
-    integrand = mass_density_ice * sum(cs.eval(E) * cs.targets_per_gram_water for cs in sigma.values())
-    integrand *= diff_flux(E, theta, flux_type, kwargs) * np.sin(theta)
+    integrand = mass_density_ice * nu.effective_volume(E)
+    integrand *= sum(sigma(E) * sigma.targets_per_gram_water for sigma in sigmas.values())
+    integrand *= nu.diff_flux(E, theta, flux_type, diff_flux_kwargs)
 
-    if atten:
-        integrand *= attenuation(E, theta, sigma)
-    
-    return integrand
+    if atten: integrand *= nu.attenuation(E, theta)
 
-def event_rate(nu, flux_type, E_bounds, theta_bounds, diff_flux_kwargs=None, atten=True, GR_only=False):
+    return integrand * np.sin(theta)
+
+def event_rate(nu, flux_type, E_bounds, theta_bounds, phi_bounds=(0,2*np.pi), diff_flux_kwargs=None, atten=True, GR_only=False):
     """Returns the yearly rate of neutrinos in the detector for a given neutrino type and flux type. The entries in the diff_flux_kwargs dict are passed into the neutrino's diff_flux function and thus will vary based on the type of flux being computed."""
     
-    if diff_flux_kwargs == None: diff_flux_kwargs = {}
+    if diff_flux_kwargs == None:
+        diff_flux_kwargs = {}
 
     if GR_only:
-        sigma = {"GR": nu.sigma["GR"]}
+        sigmas = {"GR": nu.cross_sections["GR"]}
     else:
-        sigma = nu.sigma
+        sigmas = nu.cross_sections
 
-    args = (nu.diff_flux, flux_type, sigma, atten, diff_flux_kwargs)
+    args = (nu, sigmas, flux_type, diff_flux_kwargs, atten)
     E_a, E_b = E_bounds
 
     # Integrates the GR range of 4-8 PeV separately
@@ -60,6 +56,7 @@ def event_rate(nu, flux_type, E_bounds, theta_bounds, diff_flux_kwargs=None, att
                 )[0]
 
     # Integrates over phi, and multiplies by other conversion factors to get the yearly rate.
-    yearly_rate = 2 * np.pi * V_eff * rate_seconds * seconds_per_year
+    phi_a, phi_b = phi_bounds
+    yearly_rate = (phi_b - phi_a) * rate_seconds * seconds_per_year
 
     return yearly_rate
