@@ -3,6 +3,9 @@ Predicts the yearly rate of neutrino events in the IceCube Neutrino Observatory 
 
 To allow for compatibility with other packages, this package uses classes for `Neutrino`s and `CrossSection`s, whose default attributes and methods can be replaced with other functions as desired.
 
+## Installation
+Since I didn't set this up as a proper package, you'll have to download the repository and add it to your `PYTHONPATH` in order to use it.
+
 ## Basic Usage
 As a quick example, the code below computes the yearly rate of electron neutrinos from astrophysical sources, from all zenith angles, for energies between $10^{13}$ and $10^{21}$ eV.
 
@@ -70,6 +73,6 @@ TODO
 - tau and mu flux may be inaccurate due to other effects
 
 ## Compatibility
-While this package provides a set of models by default, other models can be incorporated by modifying a `Neutrino` object's attributes.
+While this package provides a set of models by default, other models can be incorporated by modifying a `CrossSection` or `Neutrino` object's attributes.
 
-For example, the [`nuFATE`](https://github.com/aaronvincent/nuFATE) can be used to compute the attenuation of initial flux for a given flavor, including $\nu_{\tau}$ regeneration effects. To use this alongside `NeutrinoFlux`, all it would take is taking a `Neutrino`-class object and replacing its default `attenuation` method with one that uses the `nuFATE` attenuation model.
+For example, the [`nuFATE`](https://github.com/aaronvincent/nuFATE) can be used to compute the attenuation of initial flux for a given flavor, including $\nu_{\tau}$ regeneration effects. To use this alongside `NeutrinoFlux`, all it would take is taking a `Neutrino`-class object and replacing its default `attenuation` method with one that uses the `nuFATE` attenuation model. This custom `Neutrino` can then be passed into the `event_rate` function as normal.
