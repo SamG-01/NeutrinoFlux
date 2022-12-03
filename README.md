@@ -1,8 +1,8 @@
 # NeutrinoFlux
-Predicts the yearly rate of neutrino events in the IceCube Neutrino Observatory at the south pole.
+Predicts the yearly rate of neutrino events in the IceCube Neutrino Observatory at the south pole. For this purpose, this package also includes modules with functions and classes for neutrino cross sections, differential flux from atmospheric and astrophysical sources, and attenuation through the earth.
 
 ## Basic Usage
-As a quick example, the code below computes the yearly rate of electron neutrinos from astrophysical sources, from all zenith angles (relative to the north pole at $\theta = 0$ radians, with the south pole at the origin), for energies between $10^{13}$ and $10^{21}$ eV.
+As a quick example, the code below computes the yearly rate of electron neutrinos from astrophysical sources, from all zenith angles, for energies between $10^{13}$ and $10^{21}$ eV.
 
 ```python
 import numpy as np
@@ -58,6 +58,7 @@ TODO
 ## Advanced Usage
 TODO
 
+- zenith angle: relative to the north pole at $\theta = 0$ radians, with the south pole at the origin)
 - discuss CrossSection, Neutrino classes, making your own modifications
 
 ## Limitations
