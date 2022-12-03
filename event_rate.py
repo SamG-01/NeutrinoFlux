@@ -13,7 +13,13 @@ def integrand(E, theta, nu, sigmas, flux_type, diff_flux_kwargs, atten):
     return integrand * np.sin(theta)
 
 def event_rate(nu, flux_type, E_bounds, theta_bounds, phi_bounds=(0,2*np.pi), diff_flux_kwargs=None, atten=True, GR_only=False):
-    """Returns the yearly rate of neutrinos in the detector for a given neutrino type and flux type. The entries in the diff_flux_kwargs dict are passed into the neutrino's diff_flux function and thus will vary based on the type of flux being computed."""
+    """
+    Returns the yearly rate of neutrinos in the detector for a given neutrino type and flux type.
+    
+    The entries in the diff_flux_kwargs dict are passed into the neutrino's diff_flux function and thus will vary based on the type of flux being computed and how it can be customized.
+    
+    If you have a model for already-attenuated differential flux, you can take your nu.diff_flux and replace it with that function, and then you can set atten=False.
+    """
     
     if diff_flux_kwargs == None:
         diff_flux_kwargs = {}

@@ -1,5 +1,7 @@
 # NeutrinoFlux
-Predicts the yearly rate of neutrino events in the IceCube Neutrino Observatory at the south pole. For this purpose, this package also includes modules with functions and classes for neutrino cross sections, differential flux from atmospheric and astrophysical sources, and attenuation through the earth.
+Predicts the yearly rate of neutrino events in the IceCube Neutrino Observatory at the south pole. For this purpose, this package also includes modules with functions for neutrino cross sections, differential flux from atmospheric and astrophysical sources, and attenuation through the earth.
+
+To allow for compatibility with other packages, this package uses classes for `Neutrino`s and `CrossSection`s, whose default attributes and methods can be replaced with other functions as desired.
 
 ## Basic Usage
 As a quick example, the code below computes the yearly rate of electron neutrinos from astrophysical sources, from all zenith angles, for energies between $10^{13}$ and $10^{21}$ eV.
@@ -64,5 +66,10 @@ TODO
 ## Limitations
 TODO
 
-- fits have a minimum of $10^{13}$ eV
+- fits have a minimum of $10^{13}$ eV: that's just my default models tho
 - tau and mu flux may be inaccurate due to other effects
+
+## Compatibility
+While this package provides a set of models by default, other models can be incorporated by modifying a `Neutrino` object's attributes.
+
+For example, the [`nuFATE`](https://github.com/aaronvincent/nuFATE) can be used to compute the attenuation of initial flux for a given flavor, including $\nu_{\tau}$ regeneration effects. To use this alongside `NeutrinoFlux`, all it would take is taking a `Neutrino`-class object and replacing its default `attenuation` method with one that uses the `nuFATE` attenuation model.
