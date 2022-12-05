@@ -4,7 +4,7 @@ from NeutrinoFlux.cross_sections import GR_a, GR_b
 def integrand(E, theta, nu, sigmas, flux_type, diff_flux_kwargs, atten):
     """The integrand V_eff(E) * sigma(E) * Phi(E, theta) * attenuation(E, theta)."""
 
-    integrand = mass_density_ice * nu.effective_volume(E)
+    integrand = mass_density_ice * nu.effective_volume(E, theta)
     integrand *= sum(sigma(E) * sigma.targets_per_gram_water for sigma in sigmas.values())
     integrand *= nu.diff_flux(E, theta, flux_type, diff_flux_kwargs)
 

@@ -30,8 +30,8 @@ class Neutrino:
             "astro": astro_flux
         }
 
-    def effective_volume(self, E):
-        """Returns the effective volume of the detector for a given neutrino at a certain energy."""
+    def effective_volume(self, E, theta):
+        """Returns the effective volume of the detector for a given neutrino at a certain energy and zenith angle."""
         return (1e3)**3 # m^3; 1 km^3
     
     def attenuation(self, E, theta):
