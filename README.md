@@ -3,6 +3,8 @@ Predicts the yearly rate of neutrino events in the IceCube Neutrino Observatory 
 
 To allow for compatibility with other packages, this package uses classes for `Neutrino`s and `CrossSection`s, whose default attributes and methods can be replaced with other functions as desired.
 
+To see the full report on this, please check out `NeutrinoFlux.pdf` in the same folder.
+
 ## Installation
 Since I didn't set this up as a proper package, you'll have to download the repository and add it to your `PYTHONPATH` in order to use it.
 
