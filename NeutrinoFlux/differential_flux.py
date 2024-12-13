@@ -141,6 +141,6 @@ for m in C.months:
             file = mpath/neutrino.atmo_name(flux_source)
             if not file.exists():
                 flux_ = atmo_flux.solve_flux(atmo_flux.theta_grid, neutrino, flux_source, m)
-                np.savetxt(str(file), flux_.m)
+                np.savetxt(str(file), flux_)
             else:
                 atmo_flux.flux_cache[file.name, m] = np.loadtxt(str(file))
