@@ -7,6 +7,7 @@ from .cross_sections import CrossSection
 from .differential_flux import astro_flux, atmo_flux
 from .earth_density import attenuation_parameter
 
+
 class Neutrino(C.NeutrinoData):
     """Class containing the properties of a neutrino,
     including its cross sections and differential flux laws."""

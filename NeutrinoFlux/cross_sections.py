@@ -7,16 +7,7 @@ import numpy as np
 
 from . import constants as C
 
-__all__ = ["cross_section_GR", "CrossSection"]
-
-def cross_section_GR(E: C.Quantity) -> C.Quantity:
-    """Gives the electron antineutrino cross section for GR events."""
-
-    S_W = 2 * C.ureg.m_e * (E / C.ureg.c**2)/C.M_W**2
-    sigma = C.sigma_0 * S_W/((1 - S_W)**2 + C.G_W**2)/(3 * C.R_W_mu)
-
-    in_domain = (4 * C.ureg.PeV <= E) & (E <= 8 * C.ureg.PeV)
-    return np.where(in_domain, sigma.to("cm**2"), 0)
+__all__ = ["CrossSection", "cross_section_GR"]
 
 @dataclass
 class CrossSection:
@@ -61,6 +52,17 @@ class CrossSection:
         plot, = ax.plot(E, sigma, label=self.name)
         return plot
 
+
+def cross_section_GR(E: C.Quantity) -> C.Quantity:
+    """Gives the electron antineutrino cross section for GR events."""
+
+    S_W = 2 * C.ureg.m_e * (E / C.ureg.c**2)/C.M_W**2
+    sigma = C.sigma_0 * S_W/((1 - S_W)**2 + C.G_W**2)/(3 * C.R_W_mu)
+
+    in_domain = (4 * C.ureg.PeV <= E) & (E <= 8 * C.ureg.PeV)
+    return np.where(in_domain, sigma.to("cm**2"), 0)
+
+
 @C.ureg.wraps("cm**2", ["GeV", "cm**2"])
 def interpolate_sigma(E: float, sigma_p: np.ndarray) -> float:
     """Interpolates default ISO cross section data."""
@@ -72,8 +74,10 @@ def interpolate_sigma(E: float, sigma_p: np.ndarray) -> float:
     log_sigma = np.interp(log_E, log_E_p, log_sigma_p, 0, 0)
     return 10 ** log_sigma
 
+
 for file in (Path(__file__).parent/"data/cross_section").iterdir():
-    name = file.stem.removeprefix("total_").removesuffix("_iso_NLO_HERAPDF1.5NLO_EIG").lower()
+    name = file.stem.removeprefix("total_").removesuffix(
+        "_iso_NLO_HERAPDF1.5NLO_EIG").lower()
     sigma_ = 1e-27 * C.ureg.cm**2 * np.loadtxt(file, skiprows=1, unpack=True)
     func = partial(interpolate_sigma, sigma_p=sigma_)
 

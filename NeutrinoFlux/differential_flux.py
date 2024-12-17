@@ -13,9 +13,11 @@ from . import constants as C
 
 _atmo_flux_path = Path(__file__).parent/"data/atmo_flux"
 
+
 class NullIO(StringIO):
     def write(self, txt):
         pass
+
 
 # Sets energy bounds (in GeV)
 mceq_config.e_min = 1e4
@@ -64,7 +66,7 @@ class atmo_flux:
     def _solve_flux(cls, theta: float,
                     nu: C.NeutrinoData,
                     source: str = "total",
-                    month: str = "January"):
+                    month: str = "January") -> np.ndarray:
 
         # MCEq defines theta = 0 when neutrinos are coming down from the atmosphere,
         # and theta > 90 when they are up-going through the earth.
@@ -84,14 +86,16 @@ class atmo_flux:
     def solve_flux(cls, theta: float,
                    nu: C.NeutrinoData,
                    source: str = "total",
-                   month: str | list[str] = "January"):
+                   month: str | list[str] = "Average") -> np.ndarray:
         """Solves for neutrino flux on the E grid for theta."""
 
         if month == "Average":
             month = C.months
 
+        # averages the flux over the months given
         if not isinstance(month, str):
-            return sum(cls.solve_flux(theta, nu, source, m) for m in month)/len(month)
+            return sum(cls.solve_flux(theta, nu, source, m)
+                       for m in month)/len(month)
 
         assert source in cls.sources
         atmo_name = nu.atmo_name(source)
@@ -130,6 +134,7 @@ class atmo_flux:
         # solves for flux on the grid
         flux_data = cls.solve_flux(cls.theta_grid, nu, source, month)
 
+        # expands any sparse grids
         E = E * np.ones_like(theta)
         theta = theta * np.ones_like(E)
 

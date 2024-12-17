@@ -1,6 +1,9 @@
 from dataclasses import dataclass
 from pint import Quantity, UnitRegistry
 
+__all__ = ["ureg", "Quantity", "months", "R_E",
+           "rho_earth_avg", "rho_ice", "flux_units", "flavors"]
+
 ureg = UnitRegistry(auto_reduce_dimensions=True)
 ureg.setup_matplotlib(True)
 
@@ -43,6 +46,8 @@ E_0 = 100 * ureg.TeV
 gamma = 2.53  # works for each neutrino flavor
 phi_astro = 1.66  # combined for nu + nubar
 
+# Neutrino data
+
 flavors = ("e", "tau", "mu")
 anti = (True, False)
 
@@ -52,8 +57,8 @@ class NeutrinoData:
     flavor: str = "e"
     anti: bool = False
 
-    def __post_init__(self):
-        assert self.flavor in ["e", "tau", "mu"]
+    def __post_init__(self) -> None:
+        assert self.flavor in flavors
         assert isinstance(self.anti, bool)
 
     def __str__(self) -> str:

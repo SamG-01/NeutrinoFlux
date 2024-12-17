@@ -3,20 +3,24 @@ import numpy as np
 from . import constants as C
 
 # Distance Functions
-def x(theta: C.Quantity) -> C.Quantity:
+
+
+def penetration_length(theta: C.Quantity) -> C.Quantity:
     """Returns the distance through the earth a particle must
     penetrate before reaching the detector."""
 
     return np.clip(2 * C.R_E * np.cos(theta), 0, None)
 
+
 def r_E(z: C.Quantity, theta: C.Quantity,
-        X: C.Quantity | None = None) -> C.Quantity:
+        x: C.Quantity | None = None) -> C.Quantity:
     """Returns distance from the center of the earth as a function
     of the angle theta and the penetration distance z."""
 
-    if X is None:
-        X = x(theta)
-    return ((C.R_E**2 + (X - z)**2 - X * (X - z))**0.5).to(z.u)
+    if x is None:
+        x = penetration_length(theta)
+    return ((C.R_E**2 + (x - z)**2 - x * (x - z))**0.5).to(z.u)
+
 
 @C.ureg.wraps("g/cm**3", "km")
 def rho_earth(r: float) -> float:
@@ -55,17 +59,20 @@ def rho_earth(r: float) -> float:
 
     return d
 
-def attenuation_parameter(theta: C.Quantity, n: int = 1000) -> C.Quantity:
-    X = x(theta)
-    z = np.linspace(0, X, n)
-    r = r_E(z, theta, X)
+
+def attenuation_parameter(theta: C.Quantity, N: int = 1000) -> C.Quantity:
+    x = penetration_length(theta)
+    z = np.linspace(0, x, N)
+    r = r_E(z, theta, x)
     return np.trapz(rho_earth(r), z, axis=0)
 
-def attenuation_plot(ax):
+
+def attenuation_plot(ax) -> tuple:
     """Plots alpha(theta) vs theta."""
 
     theta = np.linspace(0, np.pi, 150) * C.ureg.rad
-    average, = ax.plot(theta, C.rho_earth_avg * x(theta), label="Average", linestyle="dashed")
+    average, = ax.plot(theta, C.rho_earth_avg * penetration_length(theta),
+                       label="Average", linestyle="dashed")
     actual, = ax.plot(theta, attenuation_parameter(theta), label="Actual")
 
     return average, actual

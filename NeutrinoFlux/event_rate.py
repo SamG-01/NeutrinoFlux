@@ -4,9 +4,11 @@ from . import constants as C
 from .cross_sections import CrossSection
 from .neutrinos import Neutrino
 
+
 def integrand(nu: Neutrino, E: C.Quantity, theta: C.Quantity,
               flux_type: str = "total", attenuate: bool = True,
-              cross_sections: CrossSection | dict[str, CrossSection] | None = None,
+              cross_sections: CrossSection | dict[str,
+                                                  CrossSection] | None = None,
               **flux_kwargs) -> C.Quantity:
     """The integrand rho * V_eff(E) * sigma(E) * Phi(E, theta) * attenuation(E, theta)."""
 
@@ -25,13 +27,16 @@ def integrand(nu: Neutrino, E: C.Quantity, theta: C.Quantity,
     expr = ice_mass * crsc_hits * Phi * attenuation
     return expr
 
+
 def event_rate(nu: Neutrino, E_bounds: C.Quantity | None = None,
                theta_bounds: C.Quantity | None = None,
                phi_bounds: C.Quantity | None = None,
                flux_type: str = "total",
                attenuate: bool = True,
-               cross_sections: CrossSection | dict[str, CrossSection] | None = None,
-               N: int = 1000, **flux_kwargs) -> C.Quantity:
+               cross_sections: CrossSection | dict[str,
+                                                   CrossSection] | None = None,
+               N: int = 1000, sparse: bool = True,
+               **flux_kwargs) -> C.Quantity:
 
     if E_bounds is None:
         E_bounds = [1e4, 1e12] * C.ureg.GeV
@@ -42,10 +47,12 @@ def event_rate(nu: Neutrino, E_bounds: C.Quantity | None = None,
 
     E_ = np.geomspace(*E_bounds.to("GeV").m, N) * C.ureg.GeV
     theta_ = np.linspace(*theta_bounds.to("rad"), N)
-    E, theta = np.meshgrid(E_, theta_, sparse=True)
+    E, theta = np.meshgrid(E_, theta_, sparse=sparse)
 
-    integrand_ = integrand(nu, E, theta, flux_type, attenuate, cross_sections, **flux_kwargs)
-    integral = np.trapz(np.trapz(integrand_ * np.sin(theta), theta_, axis=0), E_, axis=0)
+    integrand_ = integrand(nu, E, theta, flux_type,
+                           attenuate, cross_sections, **flux_kwargs)
+    integral = np.trapz(
+        np.trapz(integrand_ * np.sin(theta), theta_, axis=0), E_, axis=0)
     rate = (phi_bounds[1] - phi_bounds[0]) * integral
 
     return rate.to("1/year")
