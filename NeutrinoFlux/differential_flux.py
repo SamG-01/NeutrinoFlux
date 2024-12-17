@@ -11,7 +11,7 @@ import crflux.models as pm
 
 from . import constants as C
 
-path = Path(__file__).parent/"data/atmo_flux"
+_atmo_flux_path = Path(__file__).parent/"data/atmo_flux"
 
 class NullIO(StringIO):
     def write(self, txt):
@@ -64,26 +64,23 @@ class atmo_flux:
     def _solve_flux(cls, theta: float,
                     nu: C.NeutrinoData,
                     source: str = "total",
-                    month: str | list[str] = "January"):
+                    month: str = "January"):
 
-        if month == "Average":
-            month = C.months
+        # MCEq defines theta = 0 when neutrinos are coming down from the atmosphere,
+        # and theta > 90 when they are up-going through the earth.
+        # We have the opposite coordinate system, so we need to convert our angle first.
 
-        if isinstance(month, str):
-            assert source in cls.sources
-        else:
-            return np.mean([cls._solve_flux(theta, nu, source, m)
-                           for m in month], axis=0)
+        theta = 180 - theta
+        cls.mceq_run.set_density_model(('MSIS00_IC', ('SouthPole', month)))
 
-        # supresses annoying logging from mceq set_theta
+        # suppresses annoying logs from mceq set_theta
         with redirect_stdout(NullIO()):
-            cls.mceq_run.set_theta_deg(theta)
+            cls.mceq_run.set_theta_deg(180 - theta)
         cls.mceq_run.solve()
-
         return cls.mceq_run.get_solution(nu.atmo_name(source))
 
     @classmethod
-    @C.ureg.wraps(None, [None, "deg", None, None, None])
+    @C.ureg.wraps(C.flux_units, [None, "deg", None, None, None])
     def solve_flux(cls, theta: float,
                    nu: C.NeutrinoData,
                    source: str = "total",
@@ -93,13 +90,33 @@ class atmo_flux:
         if month == "Average":
             month = C.months
 
-        if isinstance(month, str):
-            assert source in cls.sources
-        else:
+        if not isinstance(month, str):
             return sum(cls.solve_flux(theta, nu, source, m) for m in month)/len(month)
 
-        cls.mceq_run.set_density_model(('MSIS00_IC', ('SouthPole', month)))
-        return cls._solve_flux(theta, nu, source, month)
+        assert source in cls.sources
+        atmo_name = nu.atmo_name(source)
+
+        # checks the class cache first
+        key = (atmo_name, month)
+        flux = cls.flux_cache.get(key, None)
+        if flux is not None:
+            return flux
+
+        # if not, checks the data files
+        data_file = _atmo_flux_path/month.lower()/atmo_name
+        if data_file.exists():
+            flux = np.loadtxt(str(data_file))
+        else:
+            # otherwise, solve for it directly
+            flux = cls._solve_flux(theta, nu, source, month)
+
+            # saves the data to a file
+            # for future reference
+            np.savetxt(str(data_file), flux)
+
+        # adds the file to the class cache
+        atmo_flux.flux_cache[key] = flux
+        return flux
 
     @classmethod
     @C.ureg.wraps(C.flux_units, [None, "GeV", "deg", None, None, None, None])
@@ -110,37 +127,17 @@ class atmo_flux:
                     method: str = "cubic") -> float:
         """Interpolates the atmospheric flux for theta and E."""
 
-        # MCEq defines theta = 0 when neutrinos are coming down from the atmosphere,
-        # and theta > 90 when they are up-going through the earth.
-        # We have the opposite coordinate system, so we need to convert our angle first.
-
         # solves for flux on the grid
-        key = (nu.atmo_name(source), month)
-        flux_data = cls.flux_cache.get(key, None)
-        if flux_data is None:
-            flux_data = cls.solve_flux(cls.theta_grid, nu, source, month)
-            cls.flux_cache[key] = flux_data
+        flux_data = cls.solve_flux(cls.theta_grid, nu, source, month)
 
         E = E * np.ones_like(theta)
         theta = theta * np.ones_like(E)
 
-        xi = np.stack((180 - np.ravel(theta), np.ravel(E)), axis=-1)
+        xi = np.stack((np.ravel(theta), np.ravel(E)), axis=-1)
         flux = interpn((cls.theta_grid.m, cls.E_grid.m),
-                       flux_data, xi, method=method)
+                       flux_data.m, xi, method=method)
 
         # if input data is 0D, return the element
         if flux.size == 1:
             return flux.item()
-        return flux.reshape(E.shape)
-
-neutrinos = [C.NeutrinoData(flavor, anti) for flavor in C.flavors for anti in C.anti]
-for m in C.months:
-    mpath = path/m.lower()
-    for neutrino in neutrinos:
-        for flux_source in atmo_flux.sources:
-            file = mpath/neutrino.atmo_name(flux_source)
-            if not file.exists():
-                flux_ = atmo_flux.solve_flux(atmo_flux.theta_grid, neutrino, flux_source, m)
-                np.savetxt(str(file), flux_)
-            else:
-                atmo_flux.flux_cache[file.name, m] = np.loadtxt(str(file))
+        return flux.reshape(np.shape(E))
