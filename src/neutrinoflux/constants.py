@@ -6,7 +6,10 @@ __all__ = ["ureg", "Quantity", "months", "R_E",
            "rho_earth_avg", "rho_ice", "flux_units", "flavors"]
 
 ureg = UnitRegistry(auto_reduce_dimensions=True)
-ureg.setup_matplotlib(True)
+try:
+    ureg.setup_matplotlib(True)
+except ImportError:
+    pass
 
 pi = 3.141592653589793
 months = ['January', 'February', 'March', 'April', 'May', 'June',
