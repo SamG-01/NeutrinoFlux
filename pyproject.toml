@@ -1,0 +1,106 @@
+# pyproject.toml
+
+[build-system]
+requires = [
+    "setuptools>=64",
+    "setuptools-scm>=8"
+]
+build-backend = "setuptools.build_meta"
+
+# project metadata
+
+[project]
+name = "NeutrinoFlux"
+version = "2.0.0"
+authors = [
+  { name="Sam Glosser" },
+]
+description = "Computes neutrino event rates in IceCube."
+readme = "README.ipynb"
+license = { file = "LICENSE" }
+
+requires-python = ">=3.8"
+dependencies = [
+  "MCEq",
+  "numpy",
+  "pint",
+  "scipy"
+]
+
+keywords = [
+    "IceCube"
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/SamG-01/NeutrinoFlux"
+Issues = "https://github.com/SamG-01/NeutrinoFlux/issues"
+
+# packaging
+
+[tool.setuptools]
+zip-safe = false
+# we explicitly list the data we want below
+include-package-data = false
+
+[tool.setuptools.packages.find]
+include = ["neutrinoflux*"]
+exclude = ["*.tests*"]
+namespaces = false
+
+[tool.setuptools.package-data]
+# additional files to include when building a wheel
+neutrinoflux = [
+  "data/*"
+]
+
+[tool.setuptools_scm]
+version_scheme = "post-release"
+version_file = "src/neutrinoflux/_version.py"
+
+# development tools
+
+[tool.pylint."MESSAGES CONTROL"]
+disable = [
+  "unspecified-encoding",
+  "line-too-long",
+  "wrong-import-order",
+  "too-many-branches",
+  "too-many-lines",
+  "too-many-statements",
+  "too-many-instance-attributes",
+  "too-many-arguments",
+  "too-many-positional-arguments",
+  "too-many-locals",
+  "too-few-public-methods",
+  "invalid-name",
+  "consider-using-f-string",
+  "consider-using-with",
+  "missing-class-docstring",
+  "missing-function-docstring",
+  "missing-module-docstring",
+]
+enable = ["useless-suppression"]
+
+[tool.pylint.CLASSES]
+defining-attr-methods = [
+  "__init__",
+  "__new__",
+  "setUp",
+  "asyncSetUp",
+  "__post_init__",
+  "setup_class", "setup_method",  # for tests
+]
+
+[tool.pylint.FORMAT]
+max-line-length = 132
+
+[tool.pylint.SIMILARITIES]
+min-similarity-lines = 10
+
+[tool.isort]
+known_first_party = ["neutrinoflux"]
