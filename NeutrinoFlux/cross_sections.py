@@ -9,6 +9,7 @@ from . import constants as C
 
 __all__ = ["CrossSection", "cross_section_GR"]
 
+
 @dataclass
 class CrossSection:
     """Class containing the function and number of targets per mass for a given cross section."""
@@ -49,15 +50,15 @@ class CrossSection:
         ax.set_xscale("log")
         ax.set_yscale("log")
 
-        plot, = ax.plot(E, sigma, label=self.name)
+        (plot,) = ax.plot(E, sigma, label=self.name)
         return plot
 
 
 def cross_section_GR(E: C.Quantity) -> C.Quantity:
     """Gives the electron antineutrino cross section for GR events."""
 
-    S_W = 2 * C.ureg.m_e * (E / C.ureg.c**2)/C.M_W**2
-    sigma = C.sigma_0 * S_W/((1 - S_W)**2 + C.G_W**2)/(3 * C.R_W_mu)
+    S_W = 2 * C.ureg.m_e * (E / C.ureg.c**2) / C.M_W**2
+    sigma = C.sigma_0 * S_W / ((1 - S_W) ** 2 + C.G_W**2) / (3 * C.R_W_mu)
 
     in_domain = (4 * C.ureg.PeV <= E) & (E <= 8 * C.ureg.PeV)
     return np.where(in_domain, sigma.to("cm**2"), 0)
@@ -72,17 +73,23 @@ def interpolate_sigma(E: float, sigma_p: np.ndarray) -> float:
     log_sigma_p = np.log10(sigma_p)
 
     log_sigma = np.interp(log_E, log_E_p, log_sigma_p, 0, 0)
-    return 10 ** log_sigma
+    return 10**log_sigma
 
 
-for file in (Path(__file__).parent/"data/cross_section").iterdir():
-    name = file.stem.removeprefix("total_").removesuffix(
-        "_iso_NLO_HERAPDF1.5NLO_EIG").lower()
+for file in (Path(__file__).parent / "data/cross_section").iterdir():
+    name = (
+        file.stem.removeprefix("total_")
+        .removesuffix("_iso_NLO_HERAPDF1.5NLO_EIG")
+        .lower()
+    )
     sigma_ = 1e-27 * C.ureg.cm**2 * np.loadtxt(file, skiprows=1, unpack=True)
     func = partial(interpolate_sigma, sigma_p=sigma_)
 
     CrossSection.cache[name] = CrossSection(name, func)
 
-CrossSection.cache["gr"] = CrossSection("gr", cross_section_GR,
-                                        C.electron_concentration_earth,
-                                        C.electron_concentration_water)
+CrossSection.cache["gr"] = CrossSection(
+    "gr",
+    cross_section_GR,
+    C.electron_concentration_earth,
+    C.electron_concentration_water,
+)

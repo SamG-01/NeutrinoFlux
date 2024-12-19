@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+
 from pint import Quantity, UnitRegistry
 
 __all__ = ["ureg", "Quantity", "months", "R_E",

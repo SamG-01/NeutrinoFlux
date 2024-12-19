@@ -2,12 +2,11 @@ from contextlib import redirect_stdout
 from io import StringIO
 from pathlib import Path
 
-import numpy as np
-from scipy.interpolate import interpn
-
-from MCEq.core import MCEqRun
-import mceq_config
 import crflux.models as pm
+import mceq_config
+import numpy as np
+from MCEq.core import MCEqRun
+from scipy.interpolate import interpn
 
 from . import constants as C
 
