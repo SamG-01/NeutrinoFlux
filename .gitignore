@@ -18,7 +18,7 @@ _build.*
 
 .coverage
 
-neutrinoflux/_version.py
+_version.py
 
 # Distribution / packaging (from github/gitignore)
 .Python

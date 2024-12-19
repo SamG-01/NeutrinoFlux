@@ -9,6 +9,7 @@ from . import constants as C
 
 __all__ = ["CrossSection", "cross_section_GR"]
 
+_cross_section_path = Path(__file__).parent/"data/cross_section"
 
 @dataclass
 class CrossSection:
@@ -76,7 +77,7 @@ def interpolate_sigma(E: float, sigma_p: np.ndarray) -> float:
     return 10**log_sigma
 
 
-for file in (Path(__file__).parent / "data/cross_section").iterdir():
+for file in _cross_section_path.iterdir():
     name = (
         file.stem.removeprefix("total_")
         .removesuffix("_iso_NLO_HERAPDF1.5NLO_EIG")
