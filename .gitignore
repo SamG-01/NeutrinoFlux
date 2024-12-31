@@ -9,7 +9,7 @@ __pycache__
 
 _build.*
 
-*.pdf
+#*.pdf
 
 .ipynb_checkpoints/
 
